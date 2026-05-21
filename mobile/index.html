@@ -1,1 +1,37 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#18181b" />
+  <title>Notas de Jogos</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div><p class="eyebrow">Avaliação rápida</p><h1>Notas de Jogos</h1></div>
+      <div class="score-pill"><span id="finalScore">0.00</span><small>/10</small></div>
+    </header>
+    <section class="panel">
+      <label for="gameName">Nome do jogo</label><input id="gameName" type="text" placeholder="Ex: Terraforming Mars" />
+      <label for="complexity">Complexidade percebida</label>
+      <select id="complexity"><option value="">Selecione</option><option>Leve</option><option>Médio leve</option><option>Médio</option><option>Médio pesado</option><option>Pesado</option></select>
+    </section>
+    <section class="criteria-list" id="criteriaList"></section>
+    <section class="panel">
+      <label for="emotionalBonus">Bônus emocional</label>
+      <select id="emotionalBonus"><option value="0">Nenhum (+0.0)</option><option value="0.1">Gosto muito (+0.1)</option><option value="0.2">Muito marcante (+0.2)</option><option value="0.3">Experiência memorável (+0.3)</option><option value="0.4">Um dos meus favoritos (+0.4)</option><option value="0.5">Top absoluto / jogo especial (+0.5)</option></select>
+      <p class="hint">Use este bônus para representar apego emocional sem distorcer demais a nota objetiva.</p>
+    </section>
+    <section class="result-card"><p>Resultado final</p><strong id="ratingLabel">Sem avaliação</strong><span id="scoreBreakdown">Nota base: 0.00 | Bônus: +0.0</span></section>
+    <section class="panel"><label for="comments">Comentários</label><textarea id="comments" placeholder="Escreva suas impressões sobre o jogo..."></textarea></section>
+    <section class="actions"><button id="summaryButton">Gerar resumo</button><button id="saveButton" class="secondary">Salvar</button><button id="loadButton" class="secondary">Carregar</button><button id="clearButton" class="ghost">Limpar</button></section>
+    <section class="summary" id="summaryBox" hidden></section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
