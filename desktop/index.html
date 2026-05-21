@@ -1,1 +1,638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notas de Jogos</title>
+  <meta name="theme-color" content="#222222" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f4f4f6;
+      color: #222;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      color: #2c2c2c;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-top: -8px;
+      margin-bottom: 24px;
+    }
+
+    .game-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eeeeee;
+    }
+
+    .criteria-name {
+      font-weight: bold;
+    }
+
+    .criteria-description {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .scale-details {
+      display: none;
+      margin-top: 10px;
+      line-height: 1.45;
+      color: #555;
+      font-size: 13px;
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .scale-toggle {
+      display: inline-block;
+      margin-top: 8px;
+      border: none;
+      background: #eeeeee;
+      color: #222;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .score-input {
+      max-width: 90px;
+    }
+
+    .bonus-box {
+      margin-top: 24px;
+      padding: 18px;
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+    }
+
+    .result-box {
+      margin-top: 28px;
+      padding: 24px;
+      border-radius: 14px;
+      text-align: center;
+      background: #f0f0f0;
+    }
+
+    .final-score {
+      font-size: 48px;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+
+    .rating-label {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .score-breakdown {
+      margin-top: 8px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+      justify-content: center;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      background: #222;
+      color: #fff;
+    }
+
+    button.secondary {
+      background: #777;
+    }
+
+    button:hover {
+      opacity: 0.88;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .notes {
+      margin-top: 24px;
+    }
+
+    .summary {
+      margin-top: 24px;
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 16px;
+      white-space: pre-line;
+      display: none;
+    }
+
+    .install-hint {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f8f8f8;
+      color: #555;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 12px;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 16px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 12px;
+      }
+
+      td {
+        border: none;
+        padding: 8px 0;
+      }
+
+      .score-input {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Notas de Jogos de Tabuleiro</h1>
+    <p class="subtitle">Sistema rápido com pesos, escala por categoria e bônus emocional.</p>
+
+    <div class="game-info">
+      <div>
+        <label for="gameName">Nome do jogo</label>
+        <input type="text" id="gameName" placeholder="Ex: Terraforming Mars" />
+      </div>
+
+      <div>
+        <label for="complexity">Complexidade percebida</label>
+        <select id="complexity">
+          <option value="">Selecione</option>
+          <option value="Leve">Leve</option>
+          <option value="Médio leve">Médio leve</option>
+          <option value="Médio">Médio</option>
+          <option value="Médio pesado">Médio pesado</option>
+          <option value="Pesado">Pesado</option>
+        </select>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Critério</th>
+          <th>Peso</th>
+          <th>Nota</th>
+          <th>Resultado</th>
+        </tr>
+      </thead>
+      <tbody id="criteriaTable"></tbody>
+    </table>
+
+    <div class="bonus-box">
+      <label for="emotionalBonus">Bônus emocional</label>
+      <select id="emotionalBonus" onchange="calculateScore()">
+        <option value="0">Nenhum (+0)</option>
+        <option value="0.1">Gosto muito (+0.1)</option>
+        <option value="0.2">Muito marcante (+0.2)</option>
+        <option value="0.3">Experiência memorável (+0.3)</option>
+        <option value="0.4">Um dos meus favoritos (+0.4)</option>
+        <option value="0.5">Top absoluto / jogo especial (+0.5)</option>
+      </select>
+
+      <div style="margin-top: 12px; color: #555; line-height: 1.5;">
+        Esse bônus representa o apego emocional ao jogo sem quebrar a consistência da escala principal.
+      </div>
+    </div>
+
+    <div class="result-box">
+      <div>Nota final</div>
+      <div class="final-score" id="finalScore">0.00</div>
+      <div class="rating-label" id="ratingLabel">Sem avaliação</div>
+      <div class="score-breakdown" id="scoreBreakdown">Nota base: 0.00 | Bônus: +0.0</div>
+    </div>
+
+    <div class="notes">
+      <label for="comments">Comentários</label>
+      <textarea id="comments" placeholder="Escreva aqui suas impressões sobre o jogo..."></textarea>
+    </div>
+
+    <div class="buttons">
+      <button onclick="calculateScore()">Calcular nota</button>
+      <button class="secondary" onclick="generateSummary()">Gerar resumo</button>
+      <button class="secondary" onclick="saveEvaluation()">Salvar no aparelho</button>
+      <button class="secondary" onclick="loadEvaluation()">Carregar salvo</button>
+      <button class="secondary" onclick="clearForm()">Limpar</button>
+    </div>
+
+    <div class="summary" id="summaryBox"></div>
+
+    <div class="install-hint">
+      Para instalar como app: publique estes arquivos no GitHub Pages, Netlify, Vercel ou outro servidor HTTPS. Depois, abra no navegador e use a opção “Instalar app”.
+    </div>
+  </div>
+
+  <script>
+    const criteria = [
+      {
+        name: "Diversão / Vontade de jogar novamente",
+        weight: 30,
+        description: "O quanto a experiência foi divertida e se você teria vontade real de jogar de novo.",
+        scale: {
+          1: "Experiência muito ruim e sem vontade de jogar novamente.",
+          2: "Pouquíssimos momentos divertidos. Partida cansativa.",
+          3: "Alguns momentos interessantes, mas no geral pouco divertido.",
+          4: "Diversão limitada e inconsistente.",
+          5: "Experiência aceitável, mas esquecível.",
+          6: "Divertido em alguns momentos, mas com problemas perceptíveis.",
+          7: "Boa experiência e vontade moderada de jogar novamente.",
+          8: "Muito divertido e envolvente durante quase toda a partida.",
+          9: "Experiência excelente e altamente memorável.",
+          10: "Favorito instantâneo. Altíssima vontade de jogar repetidamente."
+        }
+      },
+      {
+        name: "Mecânicas e fluidez",
+        weight: 20,
+        description: "Avalia se o jogo funciona bem, tem bom ritmo, regras claras e pouca sensação de travamento.",
+        scale: {
+          1: "Mecânicas quebradas ou extremamente frustrantes.",
+          2: "Fluxo ruim e regras problemáticas.",
+          3: "Muitas interrupções, lentidão e confusão.",
+          4: "Funcionamento inconsistente e pouco elegante.",
+          5: "Funciona, mas sem destaque.",
+          6: "Boa base mecânica com alguns problemas de ritmo.",
+          7: "Mecânicas sólidas e boa fluidez.",
+          8: "Design elegante e ritmo muito agradável.",
+          9: "Mecânicas extremamente refinadas.",
+          10: "Exemplo de excelência em design de jogo."
+        }
+      },
+      {
+        name: "Estratégia e decisões interessantes",
+        weight: 15,
+        description: "Mede se suas escolhas importam e se existem caminhos diferentes e relevantes para jogar.",
+        scale: {
+          1: "Praticamente sem decisões relevantes.",
+          2: "Escolhas muito óbvias e rasas.",
+          3: "Pouca profundidade estratégica.",
+          4: "Algumas decisões interessantes, mas limitadas.",
+          5: "Profundidade média e previsível.",
+          6: "Boas decisões em momentos específicos.",
+          7: "Estratégias variadas e relevantes.",
+          8: "Grande profundidade e decisões difíceis.",
+          9: "Altíssimo nível estratégico.",
+          10: "Profundidade excepcional com enorme espaço para domínio."
+        }
+      },
+      {
+        name: "Interação entre jogadores",
+        weight: 10,
+        description: "Avalia o quanto os jogadores influenciam uns aos outros, direta ou indiretamente.",
+        scale: {
+          1: "Jogadores praticamente ignoram uns aos outros.",
+          2: "Interação quase inexistente.",
+          3: "Pouca influência entre jogadores.",
+          4: "Interação ocasional e limitada.",
+          5: "Interação funcional, mas básica.",
+          6: "Boa presença de disputa e competição.",
+          7: "Interação relevante durante toda a partida.",
+          8: "Excelente dinâmica entre jogadores.",
+          9: "Alta tensão social e competitiva.",
+          10: "Interação brilhante e central para a experiência."
+        }
+      },
+      {
+        name: "Tema e imersão",
+        weight: 10,
+        description: "Analisa se o tema aparece na experiência e se combina bem com as mecânicas.",
+        scale: {
+          1: "Tema inexistente ou completamente desconectado.",
+          2: "Tema superficial e pouco perceptível.",
+          3: "Baixa imersão.",
+          4: "Tema presente, mas fraco.",
+          5: "Tema aceitável.",
+          6: "Boa integração entre tema e mecânicas.",
+          7: "Experiência temática convincente.",
+          8: "Alta imersão e identidade forte.",
+          9: "Tema extremamente bem executado.",
+          10: "Experiência temática memorável e excepcionalmente imersiva."
+        }
+      },
+      {
+        name: "Arte, componentes e produção",
+        weight: 5,
+        description: "Considera qualidade dos componentes, arte, iconografia, legibilidade e presença de mesa.",
+        scale: {
+          1: "Produção muito ruim e prejudicial ao jogo.",
+          2: "Componentes fracos e difíceis de usar.",
+          3: "Qualidade abaixo da média.",
+          4: "Produção simples e pouco refinada.",
+          5: "Produção aceitável.",
+          6: "Boa qualidade geral.",
+          7: "Produção bonita e funcional.",
+          8: "Excelente apresentação visual.",
+          9: "Componentes premium e altamente refinados.",
+          10: "Produção excepcional e referência no hobby."
+        }
+      },
+      {
+        name: "Rejogabilidade",
+        weight: 10,
+        description: "Mede se o jogo continua interessante após várias partidas.",
+        scale: {
+          1: "Sem interesse em repetir partidas.",
+          2: "Pouquíssima variedade.",
+          3: "Experiência rapidamente repetitiva.",
+          4: "Alguma variação, mas limitada.",
+          5: "Rejogabilidade mediana.",
+          6: "Boa variedade em algumas partidas.",
+          7: "Boa longevidade e múltiplas abordagens.",
+          8: "Alta variedade e interesse contínuo.",
+          9: "Grande profundidade de longo prazo.",
+          10: "Virtualmente infinito em possibilidades e descobertas."
+        }
+      }
+    ];
+
+    function createCriteriaTable() {
+      const table = document.getElementById("criteriaTable");
+      table.innerHTML = "";
+
+      criteria.forEach((item, index) => {
+        const scaleHtml = Object.entries(item.scale)
+          .map(([score, text]) => `<strong>${score}</strong>: ${text}`)
+          .join("<br>");
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>
+            <div class="criteria-name">${item.name}</div>
+            <div class="criteria-description">${item.description}</div>
+            <button class="scale-toggle" type="button" onclick="toggleScale(${index})">Ver escala 1–10</button>
+            <div class="scale-details" id="scale-${index}">${scaleHtml}</div>
+          </td>
+          <td>${item.weight}%</td>
+          <td>
+            <input 
+              type="number" 
+              class="score-input" 
+              id="score-${index}" 
+              min="0" 
+              max="10" 
+              step="0.5" 
+              placeholder="0 a 10"
+              oninput="calculateScore()"
+            />
+          </td>
+          <td id="result-${index}">0.00</td>
+        `;
+
+        table.appendChild(row);
+      });
+    }
+
+    function toggleScale(index) {
+      const scale = document.getElementById(`scale-${index}`);
+      scale.style.display = scale.style.display === "block" ? "none" : "block";
+    }
+
+    function calculateScore() {
+      let baseScore = 0;
+
+      criteria.forEach((item, index) => {
+        const input = document.getElementById(`score-${index}`);
+        let score = parseFloat(input.value);
+
+        if (isNaN(score)) {
+          score = 0;
+        }
+
+        if (score < 0) score = 0;
+        if (score > 10) score = 10;
+
+        const weightedResult = score * (item.weight / 100);
+        baseScore += weightedResult;
+
+        document.getElementById(`result-${index}`).textContent = weightedResult.toFixed(2);
+      });
+
+      const emotionalBonus = parseFloat(document.getElementById("emotionalBonus").value || 0);
+      let finalScore = baseScore + emotionalBonus;
+
+      if (finalScore > 10) {
+        finalScore = 10;
+      }
+
+      document.getElementById("finalScore").textContent = finalScore.toFixed(2);
+      document.getElementById("ratingLabel").textContent = getRatingLabel(finalScore);
+      document.getElementById("scoreBreakdown").textContent = `Nota base: ${baseScore.toFixed(2)} | Bônus: +${emotionalBonus.toFixed(1)}`;
+
+      return { baseScore, emotionalBonus, finalScore };
+    }
+
+    function getRatingLabel(score) {
+      if (score >= 9) return "Excelente / Favorito";
+      if (score >= 8) return "Muito bom";
+      if (score >= 7) return "Bom";
+      if (score >= 6) return "Mediano";
+      if (score >= 5) return "Fraco";
+      if (score > 0) return "Não recomendo";
+      return "Sem avaliação";
+    }
+
+    function generateSummary() {
+      const scores = calculateScore();
+
+      const gameName = document.getElementById("gameName").value || "Não informado";
+      const complexity = document.getElementById("complexity").value || "Não informado";
+      const comments = document.getElementById("comments").value || "Sem comentários.";
+      const ratingLabel = document.getElementById("ratingLabel").textContent;
+
+      let criteriaSummary = "";
+
+      criteria.forEach((item, index) => {
+        const score = document.getElementById(`score-${index}`).value || "0";
+        const result = document.getElementById(`result-${index}`).textContent;
+        criteriaSummary += `${item.name}: ${score}/10 | Peso: ${item.weight}% | Resultado: ${result}\n`;
+      });
+
+      const summary = `RESUMO DA AVALIAÇÃO\n\nJogo: ${gameName}\nComplexidade percebida: ${complexity}\n\nNOTAS POR CRITÉRIO\n${criteriaSummary}\nNota base: ${scores.baseScore.toFixed(2)}/10\nBônus emocional: +${scores.emotionalBonus.toFixed(1)}\nNota final: ${scores.finalScore.toFixed(2)}/10\nClassificação: ${ratingLabel}\n\nComentários:\n${comments}`;
+
+      const summaryBox = document.getElementById("summaryBox");
+      summaryBox.textContent = summary;
+      summaryBox.style.display = "block";
+    }
+
+    function getFormData() {
+      return {
+        gameName: document.getElementById("gameName").value,
+        complexity: document.getElementById("complexity").value,
+        emotionalBonus: document.getElementById("emotionalBonus").value,
+        comments: document.getElementById("comments").value,
+        scores: criteria.map((_, index) => document.getElementById(`score-${index}`).value)
+      };
+    }
+
+    function setFormData(data) {
+      document.getElementById("gameName").value = data.gameName || "";
+      document.getElementById("complexity").value = data.complexity || "";
+      document.getElementById("emotionalBonus").value = data.emotionalBonus || "0";
+      document.getElementById("comments").value = data.comments || "";
+
+      if (Array.isArray(data.scores)) {
+        data.scores.forEach((score, index) => {
+          const input = document.getElementById(`score-${index}`);
+          if (input) input.value = score;
+        });
+      }
+
+      calculateScore();
+    }
+
+    function saveEvaluation() {
+      const gameName = document.getElementById("gameName").value.trim();
+
+      if (!gameName) {
+        alert("Informe o nome do jogo antes de salvar.");
+        return;
+      }
+
+      const data = getFormData();
+      localStorage.setItem("boardgame-rating-last", JSON.stringify(data));
+      alert("Avaliação salva neste aparelho.");
+    }
+
+    function loadEvaluation() {
+      const saved = localStorage.getItem("boardgame-rating-last");
+
+      if (!saved) {
+        alert("Nenhuma avaliação salva encontrada neste aparelho.");
+        return;
+      }
+
+      setFormData(JSON.parse(saved));
+      alert("Avaliação carregada.");
+    }
+
+    function clearForm() {
+      document.getElementById("gameName").value = "";
+      document.getElementById("complexity").value = "";
+      document.getElementById("comments").value = "";
+      document.getElementById("emotionalBonus").value = "0";
+      document.getElementById("summaryBox").style.display = "none";
+
+      criteria.forEach((_, index) => {
+        document.getElementById(`score-${index}`).value = "";
+        document.getElementById(`result-${index}`).textContent = "0.00";
+      });
+
+      document.getElementById("finalScore").textContent = "0.00";
+      document.getElementById("ratingLabel").textContent = "Sem avaliação";
+      document.getElementById("scoreBreakdown").textContent = "Nota base: 0.00 | Bônus: +0.0";
+    }
+
+    createCriteriaTable();
+    calculateScore();
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js");
+      });
+    }
+  </script>
+</body>
+</html>
